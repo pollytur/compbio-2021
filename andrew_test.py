@@ -1,11 +1,10 @@
 import Bio.SeqIO
 
 #N must divide the length of the samples
-N = 5
+N = 10
 dic = {}
 
 for i,record in enumerate(Bio.SeqIO.parse("salmonella-enterica.reads.fna","fasta")):
-    #print(str(record.id),":",str(record.seq))
     ID = str(record.id)
     SEQ = str(record.seq)
     counter = 0
@@ -17,13 +16,14 @@ for i,record in enumerate(Bio.SeqIO.parse("salmonella-enterica.reads.fna","fasta
             dic[seq] = 1
         counter += 1
 
-for w in sorted(dic, key=dic.get, reverse=True):
-    print(w, dic[w])
+with open("dic.txt", "w") as f:
+    for w in reversed(sorted(dic, key=dic.get, reverse=True)):
+        f.write(w + " " + str(dic[w]) + "\n")
 
 
 
 
-        
-        
+
+
         
         
