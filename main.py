@@ -1,7 +1,7 @@
 from Bio import SeqIO
 from collections import Counter
-# todo add click here
-
+# todo add click here hello
+a = 9090
 if __name__ == '__main__':
     path = "salmonella-enterica.reads.fna"
     fasta_sequences = SeqIO.parse(path, "fasta")
