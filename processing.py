@@ -12,7 +12,7 @@ def file_extractor(file_path):
     with open(file_path, "r") as f:
         for line in f.readlines():
             S = line.split()
-            d[S[0]] = S[1]
+            d[S[0]] = int(S[1])
     return d
 
 
