@@ -1,7 +1,7 @@
 from occurence import dictionnary_writer
 
-file_path = "dic.txt"
-output_file_path = "filtered.txt"
+file_path = "outputs\dic.txt"
+output_file_path = "outputs/filtered.txt"
 
 
 def file_extractor(file_path):
@@ -9,7 +9,7 @@ def file_extractor(file_path):
     returns a dictionnary which is the same than the one created in occurence.py
     """
     d = {}
-    with open("dic.txt", "r") as f:
+    with open(file_path, "r") as f:
         for line in f.readlines():
             S = line.split()
             d[S[0]] = S[1]
