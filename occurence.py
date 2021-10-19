@@ -4,7 +4,7 @@ import Bio.SeqIO
 #N must divide the length of the samples
 N = 10
 
-filename = "salmonella-enterica.reads.fna"
+filename = "./../files_for_project/salmonella-enterica.reads.fna"
 
 
 def occurence_counter(file_path, N):
