@@ -1,7 +1,9 @@
 from occurence import dictionnary_writer
 
-file_path = "outputs\dic.txt"
-output_file_path = "outputs/filtered.txt"
+file_path_initial = "outputs\dic_initial.txt"
+file_path_variant = "outputs\dic_variant.txt"
+output_file_path_initial = "outputs/dic_initial_filtered.txt"
+output_file_path_variant = "outputs/dic_variant_filtered.txt"
 
 
 def file_extractor(file_path):
@@ -16,7 +18,7 @@ def file_extractor(file_path):
     return d
 
 
-threshold = 1
+threshold = 2
 
 
 def filter_out(dic, threshold):
@@ -28,8 +30,14 @@ def filter_out(dic, threshold):
 
 
 if __name__ == "__main__":
-    D = file_extractor(file_path)
+    D = file_extractor(file_path_initial)
     filtered_dic = filter_out(D, threshold)
     #as previously we write our filtered result in a file to eventually
     #process it later
-    dictionnary_writer(filtered_dic, output_file_path)
+    dictionnary_writer(filtered_dic, output_file_path_initial)
+
+    D = file_extractor(file_path_variant)
+    filtered_dic = filter_out(D, threshold)
+    #as previously we write our filtered result in a file to eventually
+    #process it later
+    dictionnary_writer(filtered_dic, output_file_path_variant)

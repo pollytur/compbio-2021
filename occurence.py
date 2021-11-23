@@ -5,7 +5,8 @@ from collections import defaultdict
 #N must divide the length of the samples
 N = 10
 
-filename = "./../files_for_project/salmonella-enterica.reads.fna"
+filename_initial = "./../files_for_project/salmonella-enterica.reads.fna"
+filename_variant = "./../files_for_project/salmonella-enterica-variant.reads.fna"
 
 
 def occurence_counter(file_path, N):
@@ -28,7 +29,8 @@ def occurence_counter(file_path, N):
             counter += 1
     return dic
 
-file_path = "outputs\dic.txt"
+file_path_1 = "outputs\dic_initial.txt"
+file_path_2 = "outputs\dic_variant.txt"
 
 #we write the result of the previpous function in a file because we want to separate the extraction from
 #the processing as the extraction is pretty long (arround 10sec for our example)
@@ -42,8 +44,10 @@ def dictionnary_writer(dic, filename):
             f.write(w + " " + str(dic[w]) + "\n")
 
 if __name__ == "__main__":
-    D = occurence_counter(filename, N)
-    dictionnary_writer(D, file_path)
+    D_1 = occurence_counter(filename_initial, N)
+    dictionnary_writer(D_1, file_path_1)
+    D_2 = occurence_counter(filename_variant, N)
+    dictionnary_writer(D_2, file_path_2)
 
 
 
