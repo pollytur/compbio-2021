@@ -18,3 +18,4 @@ if __name__ == "__main__":
     xlim = max(initial_dic.values())
     #draw_hist(filtered_dic, xlim)
     draw_hist(initial_dic, xlim)
+    
