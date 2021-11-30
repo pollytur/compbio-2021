@@ -14,7 +14,7 @@ def occurence_counter(file_path, N):
     returns a dictionnary where the keys are the N-sized sequences of nucleotides
     and the values are the number of occurences of each sequence in the batch of samples
     """
-    dic = defaultdict(lambda: 1)
+    dic = defaultdict(lambda: 0)
     #we parse the .fna file
     for i,record in enumerate(Bio.SeqIO.parse(file_path,"fasta")):
         #for each sample we extract the nucleotide sequence in the SEQ variable

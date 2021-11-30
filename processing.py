@@ -18,7 +18,7 @@ def file_extractor(file_path):
     return d
 
 
-threshold = 2
+threshold = 1
 
 
 def filter_out(dic, threshold):
