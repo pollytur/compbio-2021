@@ -10,6 +10,7 @@ file_path_2 = "outputs/dic_variant_filtered.txt"
 file_path_initial = "outputs/dic_initial.txt"
 file_path_variant = "outputs/dic_variant.txt"
 
+
 def comparison(file_path_1, file_path_2):
     initial_dic = file_extractor(file_path_1)
     variant_dic = file_extractor(file_path_2)
@@ -19,10 +20,12 @@ def comparison(file_path_1, file_path_2):
     print("diffs", len(diffs.keys()))
     return diffs
 
+
 def draw_hist(dic, xlim):
     print("dic = ", dic)
     plt.plot(range(0, xlim), dic)
     plt.show()
+
 
 def variance_over_threshold():
     filtered_dic_initial = file_extractor(file_path_initial)
@@ -44,12 +47,14 @@ def variance_over_threshold():
             dictionnary_writer(diff_new, "./outputs/diff_new.txt")
     draw_hist(diffs, N)
 
+
 def hamming(string_1, string_2):
-    assert len (string_1) == len (string_2)
+    assert len(string_1) == len(string_2)
     for i in range(0, len(string_1)):
         if string_1[i] != string_2[i]:
             return i
     return -1
+
 
 def hamming_filter(difference_dic, initial_dic):
     res = []
@@ -59,32 +64,30 @@ def hamming_filter(difference_dic, initial_dic):
                 res.append(key)
     return res
 
+
 def fast_hamming(difference_dic, initial_dic):
-    letter_sim_seq = difference_dic
-    one_hamming = defaultdict(lambda: 0)
+    one_hamming = defaultdict(tuple)
     letters = ['A', 'T', 'G', 'C']
     for key in difference_dic:
+        more_than_one = 0
         for i in range(0, len(key)):
-            success = 0
             for letter in letters:
-                temp_key = key[:i] + letter + key[i:]
-                if key in initial_dic:
-                    letter_sim_seq[key] = temp_key
-                    one_hamming[key] = temp_key
-                    success = 1
-                    print('Old letter = ', key[i])
-                    print('New letter = ', letter)
-                    print('Position = ', i)
-                    break
-            if success == 0:
-                letter_sim_seq[key] = -1
+                temp_key = list(key)
+                temp_key[i] = letter
+                temp_key = ''.join(temp_key)
+                if temp_key in initial_dic:
+                    one_hamming[key] = (temp_key, i, key[i], letter)
+                    more_than_one += 1
+        if more_than_one > 1:
+            print(f'`FOR {key} it was {more_than_one} changes')
     return one_hamming
+
 
 if __name__ == "__main__":
     different_keys = comparison(file_path_1, file_path_2)
     dictionnary_writer(different_keys, "./outputs/diff_thld1.txt")
     print(len(different_keys))
-    rr = fast_hamming(different_keys, file_extractor(file_path_initial))
+    rr = fast_hamming(different_keys, file_extractor(file_path_1))
     print('Length of my new dic', len(rr))
     print(rr)
-    #variance_over_threshold()
+    # variance_over_threshold()
