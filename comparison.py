@@ -70,16 +70,20 @@ def fast_hamming(difference_dic, initial_dic):
     letters = ['A', 'T', 'G', 'C']
     for key in difference_dic:
         more_than_one = 0
+        more_than_one_per_elem = np.zeros(10)
         for i in range(0, len(key)):
             for letter in letters:
                 temp_key = list(key)
                 temp_key[i] = letter
                 temp_key = ''.join(temp_key)
                 if temp_key in initial_dic:
+                    # that way we keep the last match only
                     one_hamming[key] = (temp_key, i, key[i], letter)
                     more_than_one += 1
-        if more_than_one > 1:
+                    more_than_one_per_elem[i] += 1
+        if more_than_one >= 0:
             print(f'`FOR {key} it was {more_than_one} changes')
+            print('shit = ', more_than_one_per_elem)
     return one_hamming
 
 
@@ -89,5 +93,5 @@ if __name__ == "__main__":
     print(len(different_keys))
     rr = fast_hamming(different_keys, file_extractor(file_path_1))
     print('Length of my new dic', len(rr))
-    print(rr)
+   # print(rr)
     # variance_over_threshold()
