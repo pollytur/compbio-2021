@@ -16,7 +16,7 @@ def occurence_counter(file_path, N):
     """
     dic = defaultdict(lambda: 0)
     #we parse the .fna file
-    for i,record in enumerate(Bio.SeqIO.parse(file_path,"fasta")):
+    for record in Bio.SeqIO.parse(file_path,"fasta"):
         #for each sample we extract the nucleotide sequence in the SEQ variable
         SEQ = str(record.seq)
         #we go through the sample with our N-sized window, the stride for this parsing is 1
@@ -29,8 +29,8 @@ def occurence_counter(file_path, N):
             counter += 1
     return dic
 
-file_path_1 = "outputs\dic_initial.txt"
-file_path_2 = "outputs\dic_variant.txt"
+file_path_1 = "dic_initial.txt"
+file_path_2 = "dic_variant.txt"
 
 #we write the result of the previpous function in a file because we want to separate the extraction from
 #the processing as the extraction is pretty long (arround 10sec for our example)

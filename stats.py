@@ -1,8 +1,8 @@
 from processing import file_extractor
 import matplotlib.pyplot as plt
 
-file_path_1 = "outputs/dic.txt"
-file_path_2 = "outputs/filtered.txt"
+file_path_1 = "dic_initial.txt"
+file_path_2 = "dic_variant.txt"
 
 def draw_hist(dic, xlim):
     """

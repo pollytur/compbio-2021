@@ -1,9 +1,9 @@
 from occurence import dictionnary_writer
 
-file_path_initial = "outputs\dic_initial.txt"
-file_path_variant = "outputs\dic_variant.txt"
-output_file_path_initial = "outputs/dic_initial_filtered.txt"
-output_file_path_variant = "outputs/dic_variant_filtered.txt"
+file_path_initial = "dic_initial.txt"
+file_path_variant = "dic_variant.txt"
+output_file_path_initial = "dic_initial_filtered.txt"
+output_file_path_variant = "dic_variant_filtered.txt"
 
 
 def file_extractor(file_path):
@@ -18,7 +18,7 @@ def file_extractor(file_path):
     return d
 
 
-threshold = 1
+threshold = 15
 
 
 def filter_out(dic, threshold):
