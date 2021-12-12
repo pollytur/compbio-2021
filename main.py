@@ -34,8 +34,8 @@ if __name__ == "__main__":
     # Finding sequences in the variant which are candidates for having mutations
     print("Extracting all sequences in the variant which cannot be found in the original sequence and writing them in a file...")
     unique_sequences_dict = comparison_dictionaries(initial_dic, variant_dic)
-    dictionary_writer(unique_sequences_dict,"outputs/main_unique_sequences_dict.txt")
-    print("Done. Written in file ./outputs/main_unique_sequences.txt")
+    dictionary_writer(unique_sequences_dict,"outputs/main_unique_sequences_dict_N{:d}_T{:d}.txt".format(N,T))
+    print("Done. Written in file ./outputs/main_unique_sequences_dict_N{:d}_T{:d}.txt".format(N,T))
     print("There are {:d} unique sequences.".format(len(unique_sequences_dict)))
 
 
