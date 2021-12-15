@@ -5,8 +5,8 @@ from stats import draw_hist
 import matplotlib.pyplot as plt
 import math as m
 
-filename_initial = "./../files_for_project/salmonella-enterica.reads.fna"
-filename_variant = "./../files_for_project/salmonella-enterica-variant.reads.fna"
+filename_initial = "./salmonella-enterica/salmonella-enterica.reads.fna"
+filename_variant = "./salmonella-enterica/salmonella-enterica-variant.reads.fna"
 N = 17
 T = 10
 if __name__ == "__main__":
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     # Reconstructing sequences
     reconstructed_seqs = []
     modified_seqs = []
+    counter = 0
     with open("outputs/reconstructed_sequences_N{:d}_T{:d}.txt".format(N,T),"w") as f:
         for cluster in Clusters:
             recons_seq = reconstruct(cluster)
@@ -88,7 +89,10 @@ if __name__ == "__main__":
             f.write("Mutated sequence: " + recons_seq + "\n")
             f.write("Original sequence: " + orig_seq + "\n")
             f.write("--------------------------------------------------\n")
-
+            print('Original sequance = ', orig_seq)
+            recs_with_muts = find_records_with_mutation(filename_initial, orig_seq)
+            dictionary_writer(recs_with_muts, './outputs/sequence_with_mutations_' + str(counter) + '.txt')
+            counter += 1
     # =========================================================================================
     # print("Making histograms...")
     # plt.figure()
