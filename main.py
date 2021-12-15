@@ -1,13 +1,19 @@
+#!/usr/bin/python3
+
 from occurence import *
 from processing import *
 from comparison import *
 import matplotlib.pyplot as plt
 import math as m
+import sys
 
 
 # filepath for the fasta files
-filename_initial = "./../files_for_project/salmonella-enterica.reads.fna"
-filename_variant = "./../files_for_project/salmonella-enterica-variant.reads.fna"
+filename_initial = sys.argv[1]
+filename_variant = sys.argv[2]
+
+# filename_initial = "./../files_for_project/salmonella-enterica.reads.fna"
+# filename_variant = "./../files_for_project/salmonella-enterica-variant.reads.fna"
 
 # N is the window size and T is the threshold for the error filtering
 N = 17
