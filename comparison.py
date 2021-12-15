@@ -9,33 +9,15 @@ import itertools as it
 file_path_1 = "outputs/dic_initial_filtered.txt"
 file_path_2 = "outputs/dic_variant_filtered.txt"
 
-def comparison(file_path_1, file_path_2):
-    initial_dic = file_extractor(file_path_1)
-    variant_dic = file_extractor(file_path_2)
-    return set(initial_dic) - set(variant_dic)
 
-def dictionary_writer(dic, filename):
-    """
-    writes the dictionnary obtained with the previous function in a file
-    named filename. The write is made in a sorted order sarting with the less occurente sequences
-    """
-    with open(filename, "w") as f:
-        for w in reversed(sorted(dic, key=dic.get, reverse=True)):
-            f.write(w + " " + str(dic[w]) + "\n")
 
 def comparison_dictionaries(dic_initial, dic_variant):
-    # res = []
     diff_dict = defaultdict(lambda: 0)
     for key in dic_variant.keys():
         if key not in dic_initial.keys():
             diff_dict[key] = dic_variant[key]
-            # res.append(key)
     return diff_dict
 
-def write_unique_sequences(unique_sequences):
-    with open("outputs/unique_sequences.txt","w") as f:
-        for seq in unique_sequences:
-            f.write(seq + "\n")
 
 def Levenshtein(sequence1, sequence2):
     # Initializing distance matrix
@@ -54,7 +36,9 @@ def Levenshtein(sequence1, sequence2):
                 D[i][j] = min(D[i-1][j], D[i][j-1], D[i-1][j-1]) + 1
     return D[len(sequence1)][len(sequence2)]
 
+
 def naive_clustering(unique_sequences):
+    assert len(unique_sequences) != 0
     unique_sequences_copy = unique_sequences
     # Vector of clusters
     Clusters = []
@@ -88,6 +72,7 @@ def naive_clustering(unique_sequences):
         if not unique_sequences:
             Empty = True
     return Clusters
+
 
 def order_cluster(cluster):
     # Find some starting sequence
@@ -145,22 +130,21 @@ def fast_hamming(cluster, initial_dic, N):
     print('No mutation found for that cluster')
     return seq
 
-def gene_substitution(reconstructed_sequence, mutated_sequence, original_sequence):
-    return reconstructed_sequence.replace(mutated_sequence, original_sequence)
+
+def gene_substitution(sequence, mutated_sequence, original_sequence):
+    """
+    replaces the original_sequence chunk of sequence by mutated_sequence
+    """
+    return sequence.replace(mutated_sequence, original_sequence)
 
 
-if __name__ == "__main__":
-    unique_sequences = file_extractor("outputs/orig_main_unique_sequences_dict10.txt")
-    unique_sequences_list = list(unique_sequences.keys())
-
-    Clusters = naive_clustering(unique_sequences_list)
-    for cluster in Clusters:
-        cluster = sorted(cluster, reverse=True)
-
-    print("Clustering done. Writing results to the file 'outputs/clustered_unique_sequences.txt'")
-    # Writing clustered sequences to file
-    with open("outputs/clustered_unique_sequences.txt","w") as f:
-        for i in range(len(Clusters)):
-            for sequence in Clusters[i]:
-                f.write(sequence + " ===> " + str(i+1) + "\n")
-            f.write("--------------------------------------------------\n")
+def sequence_comparison(seq_1, seq_2):
+    """
+    compares 2 iterable and stores their differences in a list of tuples
+    """
+    assert len(seq_1) == len(seq_2)
+    res = []
+    for k, s_1, s_2 in enumerate(zip(seq_1, seq_2)):
+        if s_1 != s_2:
+            res.append((s_1, s_2, k))
+    return res
