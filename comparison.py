@@ -3,6 +3,8 @@ from occurence import *
 from processing import *
 from collections import defaultdict
 import numpy as np
+import math as m
+import itertools as it
 
 file_path_1 = "outputs/dic_initial_filtered.txt"
 file_path_2 = "outputs/dic_variant_filtered.txt"
@@ -62,7 +64,6 @@ def naive_clustering(unique_sequences):
         cluster = [unique_sequences_copy[0]]
         unique_sequences_copy.remove(unique_sequences_copy[0])
         Cluster_done = False
-
         # Fill the cluster with elements which link together(have a Levenshtein distance of 2)
         while not Cluster_done:
             j = 0
@@ -88,141 +89,97 @@ def naive_clustering(unique_sequences):
             Empty = True
     return Clusters
 
-#################################NOT USED###############################################3
+def order_cluster(cluster):
+    # Find some starting sequence
+    close_seqs = np.zeros(len(cluster))
+    for i in range(len(cluster)):
+        seq = cluster[i]
+        for seq_compare in set(cluster) - set([seq]):
+            if Levenshtein(seq, seq_compare) == 2.:
+                close_seqs[i] += 1
+    idcs = list(np.where(close_seqs == 1))
+    start_seq = cluster[int(idcs[0][0])]
 
-# BUILD part of PAM algorithm which returns a list of medoids around which the data will be clustered
-# def BUILD(unique_sequences_dict_enum,D,clustersN,N):
-#     # Obtaining first medoid
-#     D_sums = np.zeros(N)
-#     for i in range(N):
-#         D_sums[i] = np.sum(D[i])
-#     m1_index = np.argmin(D_sums)
+    # Order sequences
+    ordered_cluster = [start_seq]
+    for i in range(len(cluster)):
+        for seq in set(cluster) - set(ordered_cluster):
+            if Levenshtein(seq, ordered_cluster[i]) == 2.:
+                ordered_cluster.append(seq)
+    return ordered_cluster[::-1]
 
-#     # List of medoids
-#     medoids = [(m1_index,unique_sequences_dict_enum[m1_index][1])]
+def reconstruct(cluster):
+    # Assumed to be already ordered
+    reconstructed_sequence = cluster[0]
+    for i in range(1,len(cluster)):
+        reconstructed_sequence += cluster[i][-1]
+    return reconstructed_sequence
 
-#     # Finding other medoids
-#     for i in range(clustersN - 1):
-#         # Contrivution matrix
-#         C = np.zeros((N,N))
-#         C_sums = np.zeros(N)
-#         for i, key1 in set(unique_sequences_dict_enum) - set(medoids):
-#             for j, key2 in set(unique_sequences_dict_enum) - set(medoids):
-#                 # Finding distance to closest medoid
-#                 med_dist = []
-#                 for k in range(len(medoids)):
-#                     med_dist.append(D[j][medoids[k][0]])
-#                 Dj = min(med_dist)
-    
-#                 # Calculating contribution
-#                 C[j][i] = max(Dj - Levenshtein(key1,key2),0)
-#             C_sums[i] = np.sum(C[:][i])
-#         med_idx = np.argmax(C_sums)
-#         medoids.append((med_idx,unique_sequences_dict_enum[med_idx][1]))
-#     return medoids
+# def create_alphabet():
+#     dic = defaultdict(int)
+#     seq = {'A', 'B', 'C'}
+#     letters = ['A', 'T', 'G', 'C']
+#     for letter_zero in letters:
+#         for letter_one in letters:
+#             for letter_two in letters:
+#                 seq = list(seq)
+#                 seq[0] = letter_zero
+#                 seq[1] = letter_one
+#                 seq[2] = letter_two
+#                 seq = ''.join(seq)
+#                 dic[seq] = 1
+#     return dic
 
-
-# def SWAP(unique_sequences_dict_enum,D,medoids,N):
-#     not_medoids = list(set(unique_sequences_dict_enum) - set(medoids))
-#     while True:
-#         T = np.full((N,N),np.inf)
-#         for not_medoid in not_medoids: #h
-#             for medoid in medoids: #i
-#                 # Indices
-#                 i = medoid[0]
-#                 h = not_medoid[0]
-#                 Tih = 0
-#                 for j, elem_j in set(unique_sequences_dict_enum) - set(not_medoid) - set(medoid):
-#                     # Distances
-#                     Dh = D[h][j]
-#                     Di = D[i][j]
-#                     D_other_medoids = [D[elem[0]][j] for elem in set(medoids)-set([medoid])]
-#                     Dmj = min(D_other_medoids)
-#                     # Different cases which will determine contribution of voter
-#                     if Dh > Dmj and Di > Dmj:
-#                         Cjih = 0
-#                     elif Di <= Dmj:
-#                         if Dh < Dmj:
-#                             Cjih = Dh - Di
-#                         else:
-#                             Cjih = Dmj - Di
-#                     elif Dh <= Dmj and Dmj < Di:
-#                         Cjih = Dh - Dmj 
-#                     # Updating sum
-#                     Tih += Cjih
-#                 T[i][h] = Tih
-#         i,h = np.unravel_index(T.argmin(),T.shape)
-#         if T[i][h] >= 0:
-#             break
-#         else:
-#             elem_h = unique_sequences_dict_enum[h] #not_medoid
-#             elem_i = unique_sequences_dict_enum[i] #medoid
-#             # Move old not_medoid to medoids
-#             not_medoids.remove(elem_h)
-#             medoids.append(elem_h)
-#             # Move old medoid to not_meoids
-#             medoids.remove(elem_i)
-#             not_medoids.append(elem_i)
-#     return medoids    
+# def fast_hamming(cluster, initial_dic):
+#     seq = cluster[int(m.floor(len(cluster)/2))]
+#     three_letters_alphabet = create_alphabet()
+#     index = int(m.floor(len(seq)/2))
+#     print("Initial sequence: ", seq)
+#     for word in three_letters_alphabet:
+#         seq = list(seq)
+#         seq[index - 1] = word[0]
+#         seq[index] = word[1]
+#         seq[index + 1] = word[2]
+#         seq = ''.join(seq)
+#         if seq in initial_dic:
+#             print("We got it: ", seq)
+#             print("Word: ", word)
+#             return seq
 
 
-# def PAM(unique_sequences_dict, clustersN):
-#     N = len(unique_sequences_dict)
-#     # Initializing dissimilarity matrix
-#     D = np.zeros((N,N))
-#     unique_sequences_dict_enum = list(enumerate(unique_sequences_dict))
+def create_alphabet(alphabet_length):
+    letters = []
+    for i in range(alphabet_length):
+        letters.append('A')
+        letters.append('T')
+        letters.append('G')
+        letters.append('C')
+    dic = list(it.combinations(letters, alphabet_length))
+    return dic
 
-#     for i, key1 in unique_sequences_dict_enum:
-#         for j, key2 in unique_sequences_dict_enum:
-#             if i == j:
-#                 D[i][j] = 0
-#             else:
-#                 D[i][j] = Levenshtein(key1,key2)
-    
-#     # BUILD
-#     medoids = BUILD(unique_sequences_dict_enum, D, clustersN, N)
+def fast_hamming(sequence, initial_dic, N):
+    seq = sequence
+    alphabet_length = len(sequence) - N + 1
+    letters_alphabet = create_alphabet(alphabet_length)
+    index = int(m.floor(len(seq)/2))
+    print("Initial sequence: ", seq)
+    for word in letters_alphabet:
+        seq = list(seq)
+        for i in range(alphabet_length):
+            seq[index - int(m.floor(alphabet_length/2)) + i] = word[i]
+        seq = ''.join(seq)
+        if seq in initial_dic:
+            print("We got it: ", seq)
+            return seq
 
-#     # SWAP
-#     medoids = SWAP(unique_sequences_dict_enum, D, medoids, N)
 
-#     return medoids
-
-# def cluster_sequence(medoids, non_medoid_sequences):
-#     clusterN = len(medoids)
-#     non_medoid_sequences_copy = non_medoid_sequences
-#     Clusters = []
-#     for i in range(clusterN):
-#         cluster = [medoids[i]]
-#         Done = False
-#         k = 0
-#         while not Done:
-#             j = 0
-#             Found = False
-#             while j < len(non_medoid_sequences_copy):
-#                 if Levenshtein(cluster[k], non_medoid_sequences_copy[j]) == 2.:
-#                     cluster.append(non_medoid_sequences_copy[j])
-#                     non_medoid_sequences_copy.remove(non_medoid_sequences_copy[j])
-#                     Found = True
-#                 else:
-#                     j += 1
-#             if Found:
-#                 k += 1
-#             else:
-#                 Done = True
-#         Clusters.append(cluster)
-#     return Clusters
-###########################################################################################
+def gene_substitution(reconstructed_sequence, mutated_sequence, original_sequence):
+    return reconstructed_sequence.replace(mutated_sequence, original_sequence)
 
 
 if __name__ == "__main__":
     unique_sequences = file_extractor("outputs/orig_main_unique_sequences_dict10.txt")
     unique_sequences_list = list(unique_sequences.keys())
-
-    # print("Calculating medoids for clustering...")
-    # medoid_sequences = PAM(unique_sequences,4)
-    # medoid_sequences = [elem[1] for elem in medoid_sequences]
-    # non_medoid_sequences = list(set(unique_sequences) - set(medoid_sequences))
-    # Clusters = cluster_sequence(medoid_sequences, non_medoid_sequences)
 
     Clusters = naive_clustering(unique_sequences_list)
     for cluster in Clusters:
