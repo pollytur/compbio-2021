@@ -4,7 +4,7 @@ from collections import defaultdict
 
 #N is the size of the window
 #N must be a divisor of the length of the chunk(150bp)
-N = 15
+N = 100
 
 filename_initial = "./../files_for_project/salmonella-enterica.reads.fna"
 filename_variant = "./../files_for_project/salmonella-enterica-variant.reads.fna"
@@ -44,14 +44,14 @@ file_path_2 = "outputs/dic_variant.txt"
 
 if __name__ == "__main__":
     print("Calculating occurences for the 'original' sequence...")
-    D_1 = occurence_counter(filename_initial, N, 1.)
+    D_1 = occurence_counter(filename_initial, N, 0.25)
     print("Original sequence processed.")
-    print("Calculating occurences for the variant sequence...")
-    D_2 = occurence_counter(filename_variant, N, 1.)
-    print("Variant sequence processed.")
+    # print("Calculating occurences for the variant sequence...")
+    # D_2 = occurence_counter(filename_variant, N, 0.25)
+    # print("Variant sequence processed.")
     
     print("Writing dictionaries to files...")
-    # dictionary_writer(D_1, file_path_1)
+    dictionary_writer(D_1, file_path_1)
     # dictionary_writer(D_2, file_path_2)
     print("Dictionaries written to files. Pre-processing is complete.")
 
