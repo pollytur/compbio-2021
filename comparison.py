@@ -108,6 +108,7 @@ def order_cluster(cluster):
                 ordered_cluster.append(seq)
     return ordered_cluster[::-1]
 
+
 def reconstruct(cluster):
     # Assumed to be already ordered
     reconstructed_sequence = cluster[0]
@@ -115,63 +116,34 @@ def reconstruct(cluster):
         reconstructed_sequence += cluster[i][-1]
     return reconstructed_sequence
 
-# def create_alphabet():
-#     dic = defaultdict(int)
-#     seq = {'A', 'B', 'C'}
-#     letters = ['A', 'T', 'G', 'C']
-#     for letter_zero in letters:
-#         for letter_one in letters:
-#             for letter_two in letters:
-#                 seq = list(seq)
-#                 seq[0] = letter_zero
-#                 seq[1] = letter_one
-#                 seq[2] = letter_two
-#                 seq = ''.join(seq)
-#                 dic[seq] = 1
-#     return dic
 
-# def fast_hamming(cluster, initial_dic):
-#     seq = cluster[int(m.floor(len(cluster)/2))]
-#     three_letters_alphabet = create_alphabet()
-#     index = int(m.floor(len(seq)/2))
-#     print("Initial sequence: ", seq)
-#     for word in three_letters_alphabet:
-#         seq = list(seq)
-#         seq[index - 1] = word[0]
-#         seq[index] = word[1]
-#         seq[index + 1] = word[2]
-#         seq = ''.join(seq)
-#         if seq in initial_dic:
-#             print("We got it: ", seq)
-#             print("Word: ", word)
-#             return seq
-
-
-def create_alphabet(alphabet_length):
+def create_alphabet(word_length):
     letters = []
-    for i in range(alphabet_length):
+    for i in range(word_length):
         letters.append('A')
         letters.append('T')
         letters.append('G')
         letters.append('C')
-    dic = list(it.combinations(letters, alphabet_length))
+    dic = list(it.combinations(letters, word_length))
     return dic
 
-def fast_hamming(sequence, initial_dic, N):
-    seq = sequence
-    alphabet_length = len(sequence) - N + 1
-    letters_alphabet = create_alphabet(alphabet_length)
+
+def fast_hamming(cluster, initial_dic, N):
+    seq = cluster[int(m.floor(len(cluster)/2))]
+    word_length = len(cluster) - N + 1
+    letters_alphabet = create_alphabet(word_length)
     index = int(m.floor(len(seq)/2))
     print("Initial sequence: ", seq)
     for word in letters_alphabet:
         seq = list(seq)
-        for i in range(alphabet_length):
-            seq[index - int(m.floor(alphabet_length/2)) + i] = word[i]
+        for i in range(word_length):
+            seq[index - int(m.floor(word_length/2)) + i] = word[i]
         seq = ''.join(seq)
         if seq in initial_dic:
             print("We got it: ", seq)
             return seq
-
+    print('No mutation found for that cluster')
+    return seq
 
 def gene_substitution(reconstructed_sequence, mutated_sequence, original_sequence):
     return reconstructed_sequence.replace(mutated_sequence, original_sequence)
@@ -192,36 +164,3 @@ if __name__ == "__main__":
             for sequence in Clusters[i]:
                 f.write(sequence + " ===> " + str(i+1) + "\n")
             f.write("--------------------------------------------------\n")
-
-
-
-    # # Attaching an index for each cluster(medoid)
-    # medoid_sequences_enumed = list(enumerate(medoid_sequences))
-
-    # print("Assigning each sequence to the cluster with the lowest Levenshtein distance...")
-    # # Assigning each sequence to the cluster of the medoid which is 'closest' 
-    # non_medoid_sequences_enumed = []
-    # for sequence in non_medoid_sequences:
-    #     distances = [Levenshtein(sequence,medoid) for medoid in medoid_sequences]
-    #     non_medoid_sequences_enumed.append((np.argmin(distances),sequence))
-
-    # # Making final list of clustering and sorting it
-    # clustered_sequences = medoid_sequences_enumed + non_medoid_sequences_enumed
-    # clustered_sequences.sort(key=lambda tup: tup[0])
-
-    # print("Clustering done. Writing results to the file 'outputs/clustered_unique_sequences.txt'")
-    # # Writing clustered sequences to file
-    # with open("outputs/clustered_unique_sequences.txt","w") as f:
-    #     for cluster,sequence in clustered_sequences:
-    #         f.write(sequence + " ===> " + str(cluster) + "\n")
-
-
-    # print("Extracting all sequences in the variant which cannot be found in the original and writing them in a file...")
-    # unique_sequences,unique_sequences_dict = comparison_dictionaries(initial_dic_filtered, variant_dic_filtered)
-    # write_unique_sequences(unique_sequences)
-    # dictionary_writer(unique_sequences_dict,"outputs/unique_sequences_dict.txt")
-    # print("Done. Written in file ./outputs/unique_sequences.txt")
-    # # print(len(unique_sequences))
-
-    # smaller_kmers = align_kmers(unique_sequences)
-    # print(smaller_kmers)
