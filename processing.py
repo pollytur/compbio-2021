@@ -1,11 +1,6 @@
 from enum import auto
 from occurence import *
 
-file_path_initial = "outputs/dic_initial.txt"
-file_path_variant = "outputs/dic_variant.txt"
-output_file_path_initial = "outputs/dic_initial_filtered.txt"
-output_file_path_variant = "outputs/dic_variant_filtered.txt"
-
 
 def file_extractor(file_path):
     """
@@ -26,23 +21,18 @@ def filter_out(dic, threshold):
     return dict(filter(lambda occurence: int(occurence[1]) > threshold, dic.items()))
 
 
-def find_records_with_mutation(file_path, mutation):
+def find_sequence_in_reads(file_path, mutation):
     """
     aims to find from which read the k-mer mutation is extracted
     """
     dic = defaultdict(int)
     #we parse the .fna file
     records = list(Bio.SeqIO.parse(file_path,"fasta"))
-    counter = 0
-    total_counter = 0
     for record in records[:int(len(records))]:
         #for each sample we extract the nucleotide sequence in the SEQ variable
         SEQ = str(record.seq)
         if SEQ.find(mutation) != -1:
             dic[SEQ] += 1
-            counter += 1
-        total_counter += 1
-    print('Percentage of reads contains that mutations = ', counter/total_counter)
     return dic
 
 

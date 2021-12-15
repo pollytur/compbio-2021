@@ -1,5 +1,5 @@
-from occurence import occurence_counter
-from processing import filter_out, file_extractor
+from occurence import *
+from processing import *
 from comparison import *
 import matplotlib.pyplot as plt
 import math as m
@@ -62,22 +62,21 @@ if __name__ == "__main__":
     Clusters_sorted = [order_cluster(cluster) for cluster in Clusters]
     Clusters = Clusters_sorted
 
-    print()
-    print()
+    print("\n\n")
     print("#####################################################")
-    print()
-    print()
+    print("\n\n")
+
 
     # Reconstructing sequences
     reconstructed_sequences = []
-    modified_sequences = []
+    mutated_sequences = []
     for cluster in Clusters:
         reconstructed_sequence = reconstruct(cluster)
         mutated_sequence = fast_hamming(cluster,initial_dic, N)
         if mutated_sequence == cluster[int(m.floor(len(cluster)/2))]:
             continue
         reconstructed_sequences.append(reconstructed_sequence)
-        modified_sequences.append(mutated_sequence)
+        mutated_sequences.append(mutated_sequence)
 
         # we retrieve the sequence which contains all the k-mers containing the mutated nucleotides
         #this original sequence is of the order of 2*k
@@ -92,15 +91,15 @@ if __name__ == "__main__":
             original_sequence = gene_substitution(reconstructed_sequence, cluster[int(m.floor(len(cluster)/2))], mutated_sequence)
             
     
-        initial_read = find_sequence_in_reads(filename_initial, original_sequence)
-        variant_read = find_sequence_in_reads(filename_variant, reconstructed_sequence)
-        print("The sequence: ", initial_read)
-        print("has been mutated to the sequence: ", variant_read)
+        # initial_read = find_sequence_in_reads(filename_initial, original_sequence)
+        # variant_read = find_sequence_in_reads(filename_variant, reconstructed_sequence)
+        print("The sequence:                     ", mutated_sequence)
+        print("has been mutated to the sequence: ", cluster[int(m.floor(len(cluster)/2))])
         print("The mutations which have taken place are: ")
-        snps = sequence_comparison(initial_read, variant_read)
+        print("\n\n")
+        snps = sequence_comparison(mutated_sequence, cluster[int(m.floor(len(cluster)/2))])
         for snp in snps:
             print(snp[0], " to ", snp[1], " at position ", snp[2])
-        print()
-        print()
+        print("\n\n")
 
    

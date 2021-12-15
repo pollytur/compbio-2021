@@ -6,20 +6,23 @@ import numpy as np
 import math as m
 import itertools as it
 
-file_path_1 = "outputs/dic_initial_filtered.txt"
-file_path_2 = "outputs/dic_variant_filtered.txt"
 
-
-
-def comparison_dictionaries(dic_initial, dic_variant):
+def comparison_dictionaries(initial_dictionary, variant_dictionary):
+    """
+    checking if the keys of the variant dictionary are in the keys of the initial dictionary
+    returns the list of keys of the variant dictionnary which are not in the initial dictionary
+    """
     diff_dict = defaultdict(lambda: 0)
-    for key in dic_variant.keys():
-        if key not in dic_initial.keys():
-            diff_dict[key] = dic_variant[key]
+    for key in variant_dictionary.keys():
+        if key not in initial_dictionary.keys():
+            diff_dict[key] = variant_dictionary[key]
     return diff_dict
 
 
-def Levenshtein(sequence1, sequence2):
+def levenshtein(sequence1, sequence2):
+    """
+    calculates the levenshtein distance of 2 sequences
+    """
     # Initializing distance matrix
     D = np.zeros((len(sequence1) + 1, len(sequence2) + 1))
     for i in range(len(sequence1) + 1):
@@ -38,7 +41,12 @@ def Levenshtein(sequence1, sequence2):
 
 
 def naive_clustering(unique_sequences):
+    """
+    creates clusters of sequences based on their levenshtein distance
+    returns a list of list of sequences, each list is a cluster
+    """
     assert len(unique_sequences) != 0
+
     unique_sequences_copy = unique_sequences
     # Vector of clusters
     Clusters = []
@@ -48,7 +56,7 @@ def naive_clustering(unique_sequences):
         cluster = [unique_sequences_copy[0]]
         unique_sequences_copy.remove(unique_sequences_copy[0])
         Cluster_done = False
-        # Fill the cluster with elements which link together(have a Levenshtein distance of 2)
+        # Fill the cluster with elements which link together(have a levenshtein distance of 2)
         while not Cluster_done:
             j = 0
             Found = False
@@ -56,7 +64,7 @@ def naive_clustering(unique_sequences):
                 indices = []
                 # Find indices of simillar sequences
                 for seq in cluster:
-                    if Levenshtein(seq, unique_sequences_copy[j]) == 2.:
+                    if levenshtein(seq, unique_sequences_copy[j]) == 2.:
                         indices.append(j)
                         Found = True
                 # Add sequences to cluster
@@ -75,12 +83,15 @@ def naive_clustering(unique_sequences):
 
 
 def order_cluster(cluster):
+    """
+    order the cluster and return its ordered version
+    """
     # Find some starting sequence
     close_seqs = np.zeros(len(cluster))
     for i in range(len(cluster)):
         seq = cluster[i]
         for seq_compare in set(cluster) - set([seq]):
-            if Levenshtein(seq, seq_compare) == 2.:
+            if levenshtein(seq, seq_compare) == 2.:
                 close_seqs[i] += 1
     idcs = list(np.where(close_seqs == 1))
     start_seq = cluster[int(idcs[0][0])]
@@ -89,12 +100,15 @@ def order_cluster(cluster):
     ordered_cluster = [start_seq]
     for i in range(len(cluster)):
         for seq in set(cluster) - set(ordered_cluster):
-            if Levenshtein(seq, ordered_cluster[i]) == 2.:
+            if levenshtein(seq, ordered_cluster[i]) == 2.:
                 ordered_cluster.append(seq)
     return ordered_cluster[::-1]
 
 
 def reconstruct(cluster):
+    """
+    reconstruct the window of size approximately 2*k containing all the sequences containing a mutation i  the right order
+    """
     # Assumed to be already ordered
     reconstructed_sequence = cluster[0]
     for i in range(1,len(cluster)):
@@ -103,6 +117,9 @@ def reconstruct(cluster):
 
 
 def create_alphabet(word_length):
+    """
+    returns all combinations of the letters A, T, G and C of length word_length
+    """
     letters = []
     for i in range(word_length):
         letters.append('A')
@@ -114,21 +131,21 @@ def create_alphabet(word_length):
 
 
 def fast_hamming(cluster, initial_dic, N):
+    """
+    returns the first sequence which has a hamming distance of 1 to any sequence key of the    
+    initial dictionary
+    """
     seq = cluster[int(m.floor(len(cluster)/2))]
     word_length = len(cluster) - N + 1
     letters_alphabet = create_alphabet(word_length)
     index = int(m.floor(len(seq)/2))
-    print("Initial sequence: ", seq)
     for word in letters_alphabet:
         seq = list(seq)
         for i in range(word_length):
             seq[index - int(m.floor(word_length/2)) + i] = word[i]
         seq = ''.join(seq)
         if seq in initial_dic:
-            print("We got it: ", seq)
             return seq
-    print('No mutation found for that cluster')
-    return seq
 
 
 def gene_substitution(sequence, mutated_sequence, original_sequence):
@@ -144,7 +161,9 @@ def sequence_comparison(seq_1, seq_2):
     """
     assert len(seq_1) == len(seq_2)
     res = []
-    for k, s_1, s_2 in enumerate(zip(seq_1, seq_2)):
+    k = 0
+    for s_1, s_2 in zip(seq_1, seq_2):
         if s_1 != s_2:
             res.append((s_1, s_2, k))
+        k += 1
     return res
