@@ -24,6 +24,24 @@ def filter_out(dic, threshold):
     return dict(filter(lambda occurence: int(occurence[1]) > threshold, dic.items()))
 
 
+def find_records_with_mutation(file_path, mutation):
+    dic = defaultdict(int)
+    #we parse the .fna file
+    records = list(Bio.SeqIO.parse(file_path,"fasta"))
+    counter = 0
+    total_counter = 0
+    for record in records[:int(len(records))]:
+        #for each sample we extract the nucleotide sequence in the SEQ variable
+        SEQ = str(record.seq)
+        if SEQ.find(mutation) != -1:
+            dic[SEQ] += 1
+            counter += 1
+        total_counter += 1
+    print('Percentage of reads contains that mutations = ', counter/total_counter)
+    return dic
+
+
+
 threshold = 20
 
 if __name__ == "__main__":
