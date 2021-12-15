@@ -70,7 +70,9 @@ if __name__ == "__main__":
         for cluster in Clusters:
             recons_seq = reconstruct(cluster)
             print(recons_seq)
-            mod_seqs = fast_hamming(cluster,initial_dic)
+            mod_seqs = fast_hamming(cluster,initial_dic, N)
+            if mod_seqs == cluster[int(m.floor(len(cluster)/2))]:
+                continue
             print(mod_seqs)
             reconstructed_seqs.append(recons_seq)
             modified_seqs.append(mod_seqs)
